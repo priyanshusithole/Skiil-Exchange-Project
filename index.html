@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Skill Exchange Marketplace</title>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-body">
+  <script>
+    // Failsafe error display
+    window.addEventListener('error', function (e) {
+      document.body.innerHTML = '<div style="padding:20px; color:red;"><h2>JavaScript Error:</h2><p>' + e.message + '</p><pre>' + e.error.stack + '</pre></div>';
+    });
+    // Removed emergency local storage wipe so data persists
+  </script>
+  <div id="app"></div>
+
+  <!-- Global Modal Overlay -->
+  <div id="global-modal"
+    style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(2px);">
+    <div id="modal-content" class="card"
+      style="max-width: 500px; width: 100%; position: relative; animation: modalFadeIn 0.2s ease-out;">
+      <button onclick="closeModal()"
+        style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #4B5563;">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <style>
+    @media(min-width: 768px) { .split-left { display: block !important; } }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-clickable {
+      cursor: pointer;
+    }
+
+    .card-clickable:hover {
+      border-color: var(--color-primary) !important;
+    }
+  </style>
+
+  <script src="app.js?v=11"></script>
+</body>
+
+</html>

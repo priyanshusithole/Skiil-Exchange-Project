@@ -1,3 +1,17 @@
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "YOUR_NEW_API_KEY",
+  authDomain: "skillexchange-a7afd.firebaseapp.com",
+  projectId: "skillexchange-a7afd",
+  storageBucket: "skillexchange-a7afd.firebasestorage.app",
+  messagingSenderId: "337366886848",
+  appId: "1:337366886848:web:9bd568b600f712137a0025"
+};
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+
 const initialState = {
   isLoggedIn: false,
   user: null,
@@ -11,19 +25,20 @@ const initialState = {
   publicRequests: []
 };
 
-let savedState = null;
+let savedSession = null;
 try {
-  const raw = localStorage.getItem('skillExchangeState');
+  const raw = localStorage.getItem('skillExchangeSession');
   if (raw && raw !== 'undefined') {
-    savedState = JSON.parse(raw);
+    savedSession = JSON.parse(raw);
   }
 } catch(e) {
-  console.error("Failed to parse local storage:", e);
+  console.error("Failed to parse local session:", e);
 }
 
 window.store = {
-  state: { ...initialState, ...(savedState || {}) },
+  state: { ...initialState, ...(savedSession || {}) },
   save() {
+    // Keep user's bio/skills updated in the global users array before saving
     if (this.state.user && this.state.users) {
       const dbIdx = this.state.users.findIndex(u => u.userId === this.state.user.userId);
       if (dbIdx > -1) {
@@ -32,7 +47,25 @@ window.store = {
         this.state.users[dbIdx].skillsWanted = this.state.user.skillsWanted;
       }
     }
-    localStorage.setItem('skillExchangeState', JSON.stringify(this.state));
+    
+    // Save personal session locally (login state)
+    const sessionData = {
+      isLoggedIn: this.state.isLoggedIn,
+      user: this.state.user,
+      mySkills: this.state.mySkills,
+      requests: this.state.requests,
+      upcomingSessions: this.state.upcomingSessions
+    };
+    localStorage.setItem('skillExchangeSession', JSON.stringify(sessionData));
+    
+    // Sync global data to Firebase
+    database.ref('/').set({
+      users: this.state.users || [],
+      marketplaceSkills: this.state.marketplaceSkills || [],
+      publicRequests: this.state.publicRequests || [],
+      feedbacks: this.state.feedbacks || []
+    });
+    
     window.router(); // Re-render current view on state change
   },
   reset() {
@@ -226,6 +259,29 @@ window.store = {
     }
   }
 };
+
+// Sync from Firebase
+database.ref('/').on('value', (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    window.store.state.users = data.users || [];
+    window.store.state.marketplaceSkills = data.marketplaceSkills || [];
+    window.store.state.publicRequests = data.publicRequests || [];
+    window.store.state.feedbacks = data.feedbacks || [];
+    window.router();
+  } else {
+    // If Firebase is completely empty, initialize it with any legacy local state we had
+    let legacyState = null;
+    try { legacyState = JSON.parse(localStorage.getItem('skillExchangeState')); } catch(e){}
+    if(legacyState && legacyState.users && legacyState.users.length > 0) {
+      window.store.state.users = legacyState.users || [];
+      window.store.state.marketplaceSkills = legacyState.marketplaceSkills || [];
+      window.store.state.publicRequests = legacyState.publicRequests || [];
+      window.store.state.feedbacks = legacyState.feedbacks || [];
+      window.store.save(); // Pushes legacy to Firebase
+    }
+  }
+});
 
 const views = {};
 

@@ -1,13 +1,27 @@
 // Initialize Firebase
-const firebaseConfig = {
-  apiKey: "YOUR_NEW_API_KEY",
-  authDomain: "skillexchange-a7afd.firebaseapp.com",
-  projectId: "skillexchange-a7afd",
-  databaseURL: "https://skillexchange-a7afd-default-rtdb.firebaseio.com",
-  storageBucket: "skillexchange-a7afd.firebasestorage.app",
-  messagingSenderId: "337366886848",
-  appId: "1:337366886848:web:9bd568b600f712137a0025"
-};
+if (typeof firebaseConfig === 'undefined') {
+  console.error("Firebase configuration is missing! Please create a config.js file using config.example.js as a template.");
+  document.addEventListener('DOMContentLoaded', () => {
+    const appEl = document.getElementById('app');
+    if (appEl) {
+      appEl.innerHTML = `
+        <div style="padding: 2rem; max-width: 600px; margin: 2rem auto; text-align: center; border: 3px solid #EF4444; border-radius: 12px; background-color: #FEF2F2; font-family: 'Inter', sans-serif;">
+          <h2 style="color: #DC2626; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem;">CONFIGURATION MISSING</h2>
+          <p style="color: #991B1B; font-weight: 600; margin-bottom: 1.5rem;">The Firebase configuration file (<code>config.js</code>) is missing or could not be loaded.</p>
+          <div style="text-align: left; background: white; padding: 1rem; border: 2px solid #000; border-radius: 6px; box-shadow: 2px 2px 0 #000;">
+            <p style="margin: 0 0 0.5rem 0; font-weight: 700;">To fix this:</p>
+            <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.5;">
+              <li>Duplicate <code>config.example.js</code> and rename it to <code>config.js</code>.</li>
+              <li>Open <code>config.js</code> and enter your Firebase API key and details.</li>
+              <li>Refresh this page.</li>
+            </ol>
+          </div>
+        </div>`;
+    }
+  });
+  throw new Error("Firebase configuration (firebaseConfig) not found. See config.example.js.");
+}
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }

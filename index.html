@@ -13,7 +13,20 @@
   <script>
     // Failsafe error display
     window.addEventListener('error', function (e) {
-      document.body.innerHTML = '<div style="padding:20px; color:red;"><h2>JavaScript Error:</h2><p>' + e.message + '</p><pre>' + e.error.stack + '</pre></div>';
+      document.body.innerHTML = `
+        <div style="padding: 2rem; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #FDF0D5; font-family: 'Inter', sans-serif; box-sizing: border-box;">
+          <div style="max-width: 600px; width: 100%; padding: 2.5rem; background: #FFF; border: 3px solid #000; border-radius: 12px; box-shadow: 4px 4px 0 #000; box-sizing: border-box;">
+            <h2 style="color: #DC2626; font-size: 1.75rem; font-weight: 900; text-transform: uppercase; margin-top: 0; margin-bottom: 1rem; text-shadow: 1px 1px 0 #000;">Application Error</h2>
+            <p style="color: #1F2937; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; line-height: 1.4;">${e.message}</p>
+            <div style="background: #F3F4F6; border: 2px solid #000; border-radius: 6px; padding: 1rem; overflow-x: auto; box-sizing: border-box;">
+              <pre style="margin: 0; font-family: monospace; font-size: 0.85rem; color: #4B5563; white-space: pre-wrap; word-break: break-all;">${e.error && e.error.stack ? e.error.stack : 'No stack trace available.'}</pre>
+            </div>
+            <p style="margin-top: 1.5rem; margin-bottom: 0; font-size: 0.9rem; font-weight: 600; color: #4B5563; text-align: center;">
+              Need help? Check the console log or duplicate <b>config.example.js</b> to <b>config.js</b>.
+            </p>
+          </div>
+        </div>
+      `;
     });
     // Removed emergency local storage wipe so data persists
   </script>
@@ -56,6 +69,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script src="config.js"></script>
   <script src="app.js?v=14"></script>
 </body>
 

@@ -79,6 +79,9 @@ window.store = {
       marketplaceSkills: this.state.marketplaceSkills || [],
       publicRequests: this.state.publicRequests || [],
       feedbacks: this.state.feedbacks || []
+    }).catch(error => {
+      console.error("Firebase Sync Failed:", error);
+      alert("Firebase Sync Failed: " + error.message + "\nYour changes were not saved to the backend database.");
     });
     
     window.router(); // Re-render current view on state change
@@ -296,6 +299,9 @@ database.ref('/').on('value', (snapshot) => {
       window.store.save(); // Pushes legacy to Firebase
     }
   }
+}, (error) => {
+  console.error("Firebase Read Error:", error);
+  alert("Firebase Connection Error: " + error.message + "\nPlease make sure your Firebase Realtime Database Security Rules are set to public.");
 });
 
 const views = {};
